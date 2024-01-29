@@ -6,9 +6,17 @@ import Inputs from './components/Inputs'
 import TimeLocation from './components/TimeLocation'
 import { TemperatureDetails } from './components/TemperatureDetails'
 import Forecast from './components/Forecast'
+import getWeatherData from './services/weatherService'
 
 function App() {
   const [count, setCount] = useState(0)
+
+  const fetchWeather = async () =>{
+    const data = await getWeatherData("weather", {q: "london"});
+    console.log(data);
+  }
+
+  fetchWeather();
 
   return (
     <div className='mx-auto max-w-screen-md mt-4 py-5 px-32 bg-gradient-to-br from-slate-600
