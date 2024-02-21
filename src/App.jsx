@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import UilReact from '@iconscout/react-unicons/icons/uil-react'
 import TopButtons from './components/TopButtons'
@@ -9,14 +9,20 @@ import Forecast from './components/Forecast'
 import getFormattedWeatherData from './services/weatherService'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [query, setQuery] = useState({q: 'berlin'});
+  const [units, setUnits] = useState('metric');
+  const [weather, setWeather] = useState(null);
 
-  const fetchWeather = async () =>{
-    const data = await getFormattedWeatherData({q: "london"});
-    console.log(data);
-  }
-
-  fetchWeather();
+  useEffect(() => {
+    const fetchWeather = async () =>{
+      await getFormattedWeatherData({...query, units})
+        .then((data) => {
+          setWeather(data)
+        });
+    }
+  
+    fetchWeather();
+  }, [query, units]);
 
   return (
     <div className='mx-auto max-w-screen-md mt-4 py-5 px-32 bg-gradient-to-br from-slate-600
@@ -24,10 +30,16 @@ function App() {
     >
       <TopButtons />
       <Inputs />
-      <TimeLocation />
-      <TemperatureDetails />
-      <Forecast title="hourly forecast"/>
-      <Forecast title="hourly forecast"/>
+
+      {weather && (
+        <div>
+          <TimeLocation weather={weather}/>
+          <TemperatureDetails weather={weather}/>
+    
+          <Forecast title="hourly forecast"/>
+          <Forecast title="hourly forecast"/>
+        </div>
+      )}
     </div>
   )
 }
